@@ -15,9 +15,7 @@
 # Or RubyMine or other
 Pry.config.editor = proc { |file, line| "rubymine --line #{line} #{file}" }
 
-unless defined?(Pry::Prompt)
-  Pry.config.prompt =  Pry::NAV_PROMPT
-end
+Pry.config.prompt = Pry::NAV_PROMPT unless defined?(Pry::Prompt)
 
 # In case you want to see the project and the env plus the nav
 # IMHO, too wide.
@@ -28,13 +26,13 @@ end
 # === COLORS ===
 unless ENV['PRY_BW'] && defined?(PryTheme)
   Pry.color = true
-  Pry.config.theme = "railscasts"
+  Pry.config.theme = 'railscasts'
   Pry.config.prompt = PryRails::RAILS_PROMPT if defined?(PryRails::RAILS_PROMPT)
   Pry.config.prompt ||= Pry.prompt
 end
 
 # === HISTORY ===
-Pry::Commands.command /^$/, "repeat last command" do
+Pry::Commands.command(/^$/, 'repeat last command') do
   _pry_.run_command Pry.history.to_a.last
 end
 
@@ -55,10 +53,10 @@ def pd
   display_shortcuts
 end
 
-Pry.config.commands.alias_command "h", "hist -T 20", desc: "Last 20 commands"
-Pry.config.commands.alias_command "hg", "hist -T 20 -G", desc: "Up to 20 commands matching expression"
-Pry.config.commands.alias_command "hG", "hist -G", desc: "Commands matching expression ever used"
-Pry.config.commands.alias_command "hr", "hist -r", desc: "hist -r <command number> to run a command"
+Pry.config.commands.alias_command 'h', 'hist -T 20', desc: 'Last 20 commands'
+Pry.config.commands.alias_command 'hg', 'hist -T 20 -G', desc: 'Up to 20 commands matching expression'
+Pry.config.commands.alias_command 'hG', 'hist -G', desc: 'Commands matching expression ever used'
+Pry.config.commands.alias_command 'hr', 'hist -r', desc: 'hist -r <command number> to run a command'
 
 # Fix deprecation warning, so override default for now.
 # Remember to eventually remove this!
@@ -67,24 +65,24 @@ Pry.config.commands.alias_command "hr", "hist -r", desc: "hist -r <command numbe
 Pry.commands.alias_command '?', 'show-source -d'
 
 if defined?(PryByebug)
-   def pry_debug
-     puts "You can also call 'pd' to save typing!"
-     pd
-   end
+  def pry_debug
+    puts "You can also call 'pd' to save typing!"
+    pd
+  end
 
-   def pp(obj)
+  def pp(obj)
     Pry::ColorPrinter.pp(obj)
-   end
+  end
 end
 
 # Use awesome_print (or amazing_print)
 begin
   require 'awesome_print'
   AwesomePrint.pry!
-rescue LoadError => err
+rescue LoadError => e
   begin
-    puts "no awesome_print :( #{err}"
-    puts "trying amazing_print"
+    puts "no awesome_print :( #{e}"
+    puts 'trying amazing_print'
     require 'amazing_print'
     AmazingPrint.pry!
   rescue LoadError => err2
@@ -93,61 +91,61 @@ rescue LoadError => err
 end
 
 # Hit Enter to repeat last command
-Pry::Commands.command /^$/, "repeat last command" do
+Pry::Commands.command(/^$/, 'repeat last command') do
   pry_instance.run_command Pry.history.to_a.last
 end
 
 before_session_hook = Pry::Hooks.new.add_hook(:before_session, :add_dirs_to_load_path) do
   # adds the directories /spec and /test directories to the path if they exist and not already included
   current_dir = `pwd`.chomp
-  dirs_added = %w(spec test presenters lib).
-    map{ |d| "#{current_dir}/#{d}" }.
-    map do |path|
-    if File.exist?(path) && !$:.include?(path)
-      i$: << path
+  dirs_added = %w[spec test presenters lib]
+    .map { |d| "#{current_dir}/#{d}" }
+    .map do |path|
+    if File.exist?(path) && !$LOAD_PATH.include?(path)
+      i $LOAD_PATH << path
       path
     end
   end.compact
-  puts "Added #{ dirs_added.join(", ") } to load path per hook in ~/.pryrc." unless dirs_added.empty?
+  puts "Added #{dirs_added.join(', ')} to load path per hook in ~/.pryrc." unless dirs_added.empty?
 end
 before_session_hook.exec_hook(:before_session)
 
 def more_help
-  puts "Helpful shortcuts:"
-  puts "hh  : hist -T 20       Last 20 commands"
-  puts "hg : hist -T 20 -G    Up to 20 commands matching expression"
-  puts "hG : hist -G          Commands matching expression ever used"
-  puts "hr : hist -r          hist -r <command number> to run a command"
+  puts 'Helpful shortcuts:'
+  puts 'hh  : hist -T 20       Last 20 commands'
+  puts 'hg : hist -T 20 -G    Up to 20 commands matching expression'
+  puts 'hG : hist -G          Commands matching expression ever used'
+  puts 'hr : hist -r          hist -r <command number> to run a command'
   puts
 
-  puts "Samples variables"
-  puts "a_array  :  [1, 2, 3, 4, 5, 6]"
-  puts "a_hash   :  { hello: \"world\", free: \"of charge\" }"
+  puts 'Samples variables'
+  puts 'a_array  :  [1, 2, 3, 4, 5, 6]'
+  puts 'a_hash   :  { hello: "world", free: "of charge" }'
   puts
-  puts "helper   : Access Rails helpers"
-  puts "app      : Access url_helpers"
+  puts 'helper   : Access Rails helpers'
+  puts 'app      : Access url_helpers'
   puts
-  puts "require \"rails_helper\"              : To include Factory Girl Syntax"
-  puts "include FactoryGirl::Syntax::Methods  : To include Factory Girl Syntax"
+  puts 'require "rails_helper"              : To include Factory Girl Syntax'
+  puts 'include FactoryGirl::Syntax::Methods  : To include Factory Girl Syntax'
   puts
-  puts "or if you defined one..."
-  puts "require \"pry_helper\""
+  puts 'or if you defined one...'
+  puts 'require "pry_helper"'
   puts
-  puts "Sidekiq::Queue.new.clear              : To clear sidekiq"
-  puts "Sidekiq.redis { |r| puts r.flushall } : Another clear of sidekiq"
+  puts 'Sidekiq::Queue.new.clear              : To clear sidekiq'
+  puts 'Sidekiq.redis { |r| puts r.flushall } : Another clear of sidekiq'
   puts
   puts "Run `require 'factory_bot'; FactoryBot.find_definitions` for FactoryBot"
   puts
   display_shortcuts
 
-  puts "Debugging Shortcuts"
+  puts 'Debugging Shortcuts'
   puts
   puts
-  ""
+  ''
 end
 
 def display_shortcuts
-  puts "Installed debugging Shortcuts"
+  puts 'Installed debugging Shortcuts'
   puts 'w  :  whereami'
   puts 's  :  step'
   puts 'n  :  next'
@@ -162,15 +160,15 @@ def display_shortcuts
   puts 'd  :  down'
   puts 'b  :  break'
   puts
-  puts "Introspection"
+  puts 'Introspection'
   puts '$    :  show whole method of current context'
   puts '$ foo:  show definition of foo'
   puts '? foo:  show docs for for'
   puts
   puts "Be careful not to use shortcuts for temp vars, like 'u = User.first`"
-  puts "Run `help` to see all the pry commands that would conflict (and lots good info)"
-  puts "Run `more_help to see many helpful tips from the ~/.pryrc`"
-  ""
+  puts 'Run `help` to see all the pry commands that would conflict (and lots good info)'
+  puts 'Run `more_help to see many helpful tips from the ~/.pryrc`'
+  ''
 end
 
 # Utility global methods for convenience
@@ -179,20 +177,20 @@ def a_array
 end
 
 def a_hash
-  { hello: "world", free: "of charge" }
+  { hello: 'world', free: 'of charge' }
 end
 
 def do_time(repetitions = 100, &block)
   require 'benchmark'
-  Benchmark.bm{|b| b.report{repetitions.times(&block)}}
+  Benchmark.bm { |b| b.report { repetitions.times(&block) } }
 end
 
 # by default, set up the debug shortcuts
-puts "Loaded ~/.pryrc. Setting up debug shortcuts."
+puts 'Loaded ~/.pryrc. Setting up debug shortcuts.'
 pd
 
 def each_without_puma_config(enumerable)
-  enumerable.filter { |key, _value| key != 'puma.config'  }
+  enumerable.except('puma.config')
 end
 
 # https://github.com/pry/pry/issues/2185#issuecomment-945082143
