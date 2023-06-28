@@ -1,0 +1,15 @@
+name: Run RSpec tests
+
+on: push
+
+jobs:
+  run-rspec-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+      - name: Run tests
+        run: |
+          bundle install --jobs 4 --retry 3
+          bundle exec rspec
