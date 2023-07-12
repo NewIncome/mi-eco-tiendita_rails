@@ -7,9 +7,14 @@
   margin-bottom: -9px;
 }
 
-#Section2 {
+#Section2, #Section4 {
   text-align: center;
-  padding: 150px 100px;
+  padding: 110px 90px 150px;
+
+  .h-line {
+    border-bottom: 1px black solid;
+    padding-bottom: 10px;
+  }
 }
 
 .vh-100 { height: 100vh; }
@@ -19,11 +24,6 @@
   max-width: 900px;
 
   .sec3-h { padding-bottom: 55px; }
-
-  .h-line {
-    border-bottom: 1px black solid;
-    padding-bottom: 10px;
-  }
 
   .cs {
     color: #f5f1ff;
